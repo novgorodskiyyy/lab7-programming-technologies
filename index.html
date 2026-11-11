@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АИС Ветклиника</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-content">
+        <h1 class="logo">🐾 АИС Ветклиника</h1>
+        <nav class="navigation" id="main-nav">
+            <a href="#home" class="nav-link" data-section="home">Главная</a>
+            <a href="#patients" class="nav-link" data-section="patients">Пациенты</a>
+            <a href="#appointments" class="nav-link" data-section="appointments">Записи</a>
+            <a href="#services" class="nav-link" data-section="services">Услуги</a>
+            <a href="#reports" class="nav-link" data-section="reports">Отчеты</a>
+            <a href="#admin" class="nav-link" data-section="admin">Админ</a>
+            <a href="#login" class="nav-link" data-section="login" id="login-link">Войти</a>
+            <a href="#" class="nav-link" id="logout-link" style="display:none;">Выйти</a>
+        </nav>
+        <div class="user-info" id="user-info">👤 Гость</div>
+    </div>
+</header>
+
+<main class="main-content">
+
+    <section id="home" class="page-section active">
+        <h2>Добро пожаловать в АИС Ветклиника</h2>
+        <p class="description">Система автоматизации работы ветеринарной клиники.</p>
+        <div class="dashboard">
+            <div class="dashboard-card">
+                <h3>📋 Пациенты</h3>
+                <p id="patients-count">Всего пациентов: 0</p>
+                <a href="#patients" class="btn" data-section="patients">Перейти к списку</a>
+            </div>
+            <div class="dashboard-card">
+                <h3>📅 Записи</h3>
+                <p id="appointments-count">Записей: 0</p>
+                <a href="#appointments" class="btn" data-section="appointments">Просмотреть</a>
+            </div>
+            <div class="dashboard-card">
+                <h3>💊 Услуги</h3>
+                <p id="services-count">Услуг: 0</p>
+                <a href="#services" class="btn" data-section="services">Список услуг</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="patients" class="page-section">
+        <h2>Список пациентов</h2>
+        <form class="search-form" id="patient-filter-form">
+            <label for="filter-name">Поиск по кличке:</label>
+            <input type="text" id="filter-name" placeholder="Введите кличку..." class="search-input">
+            <label for="filter-type">Фильтр по виду:</label>
+            <select id="filter-type" class="filter-select">
+                <option value="">Все виды</option>
+            </select>
+            <label for="filter-owner">Фильтр по владельцу:</label>
+            <input type="text" id="filter-owner" placeholder="Владелец..." class="search-input">
+            <button type="submit" class="btn">Применить</button>
+            <button type="button" class="btn btn-secondary" id="reset-patient-filter">Сбросить</button>
+        </form>
+        <div class="sort-buttons" id="sort-buttons">
+            <span>Сортировать по:</span>
+            <button type="button" class="btn btn-small" data-sort="name">Кличке</button>
+            <button type="button" class="btn btn-small" data-sort="birthDate">Дате рождения</button>
+            <button type="button" class="btn btn-small" data-sort="owner">Владельцу</button>
+            <button type="button" class="btn btn-small" data-sort="createdAt">Дате добавления</button>
+        </div>
+        <div class="data-list" id="patients-list"></div>
+        <div class="pagination" id="pagination"></div>
+        <div id="admin-controls" style="display:none;">
+            <a href="#add-patient" class="btn btn-primary" data-section="add-patient">+ Добавить пациента</a>
+        </div>
+    </section>
+
+    <section id="add-patient" class="page-section">
+        <h2>Добавление нового пациента</h2>
+        <p class="description">Заполните все обязательные поля.</p>
+        <form class="data-form" id="add-patient-form">
+            <div class="form-group">
+                <label for="pet-name">Кличка:</label>
+                <input type="text" id="pet-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="pet-type">Вид:</label>
+                <select id="pet-type" name="type" required></select>
+            </div>
+            <div class="form-group">
+                <label for="pet-breed">Порода:</label>
+                <input type="text" id="pet-breed" name="breed">
+            </div>
+            <div class="form-group">
+                <label for="pet-birth">Дата рождения:</label>
+                <input type="date" id="pet-birth" name="birthDate">
+            </div>
+            <div class="form-group">
+                <label for="owner-name">Владелец (ФИО):</label>
+                <input type="text" id="owner-name" name="owner" required>
+            </div>
+            <div class="form-group">
+                <label for="owner-phone">Телефон владельца:</label>
+                <input type="tel" id="owner-phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="pet-description">Описание:</label>
+                <textarea id="pet-description" name="description" maxlength="199" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a href="#patients" class="btn btn-secondary" data-section="patients">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="edit-patient" class="page-section">
+        <h2>Редактирование пациента</h2>
+        <form class="data-form" id="edit-patient-form">
+            <input type="hidden" id="edit-id">
+            <div class="form-group">
+                <label for="edit-name">Кличка:</label>
+                <input type="text" id="edit-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-type">Вид:</label>
+                <select id="edit-type" name="type" required></select>
+            </div>
+            <div class="form-group">
+                <label for="edit-breed">Порода:</label>
+                <input type="text" id="edit-breed" name="breed">
+            </div>
+            <div class="form-group">
+                <label for="edit-birth">Дата рождения:</label>
+                <input type="date" id="edit-birth" name="birthDate">
+            </div>
+            <div class="form-group">
+                <label for="edit-owner">Владелец (ФИО):</label>
+                <input type="text" id="edit-owner" name="owner" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-phone">Телефон владельца:</label>
+                <input type="tel" id="edit-phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="edit-description">Описание:</label>
+                <textarea id="edit-description" name="description" maxlength="199" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Обновить</button>
+                <a href="#patients" class="btn btn-secondary" data-section="patients">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="appointments" class="page-section">
+        <h2>Записи на прием</h2>
+        <form class="search-form" id="appointment-filter-form">
+            <label for="filter-app-date">Фильтр по дате:</label>
+            <input type="date" id="filter-app-date" class="search-input">
+            <label for="filter-app-doctor">Фильтр по врачу:</label>
+            <select id="filter-app-doctor" class="filter-select">
+                <option value="">Все врачи</option>
+            </select>
+            <button type="submit" class="btn">Применить</button>
+            <button type="button" class="btn btn-secondary" id="reset-app-filter">Сбросить</button>
+        </form>
+        <div class="data-list" id="appointments-list"></div>
+        <div id="admin-controls-app" style="display:none;">
+            <a href="#add-appointment" class="btn btn-primary" data-section="add-appointment">+ Новая запись</a>
+        </div>
+    </section>
+
+    <section id="add-appointment" class="page-section">
+        <h2>Новая запись на прием</h2>
+        <form class="data-form" id="add-appointment-form">
+            <div class="form-group">
+                <label for="app-patient">Пациент:</label>
+                <select id="app-patient" name="patient" required></select>
+            </div>
+            <div class="form-group">
+                <label for="app-doctor-new">Врач:</label>
+                <select id="app-doctor-new" name="doctor" required></select>
+            </div>
+            <div class="form-group">
+                <label for="app-date-new">Дата:</label>
+                <input type="date" id="app-date-new" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="app-time">Время:</label>
+                <input type="time" id="app-time" name="time" required>
+            </div>
+            <div class="form-group">
+                <label for="app-service">Услуга:</label>
+                <select id="app-service" name="service" required></select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Записать</button>
+                <a href="#appointments" class="btn btn-secondary" data-section="appointments">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="services" class="page-section">
+        <h2>Список услуг</h2>
+        <form class="search-form" id="service-filter-form">
+            <label for="filter-service-name">Поиск:</label>
+            <input type="text" id="filter-service-name" placeholder="Название услуги..." class="search-input">
+            <label for="filter-service-cat">Категория:</label>
+            <select id="filter-service-cat" class="filter-select">
+                <option value="">Все категории</option>
+            </select>
+            <button type="submit" class="btn">Применить</button>
+            <button type="button" class="btn btn-secondary" id="reset-service-filter">Сбросить</button>
+        </form>
+        <div class="data-list" id="services-list"></div>
+        <div id="admin-controls-serv" style="display:none;">
+            <a href="#add-service" class="btn btn-primary" data-section="add-service">+ Добавить услугу</a>
+        </div>
+    </section>
+
+    <section id="add-service" class="page-section">
+        <h2>Добавление новой услуги</h2>
+        <form class="data-form" id="add-service-form">
+            <div class="form-group">
+                <label for="service-name">Название услуги:</label>
+                <input type="text" id="service-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="service-category">Категория:</label>
+                <select id="service-category" name="category" required></select>
+            </div>
+            <div class="form-group">
+                <label for="service-price">Стоимость (руб.):</label>
+                <input type="number" id="service-price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="service-duration">Длительность (мин):</label>
+                <input type="number" id="service-duration" name="duration" required>
+            </div>
+            <div class="form-group">
+                <label for="service-description">Описание:</label>
+                <textarea id="service-description" name="description" maxlength="199" required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Добавить</button>
+                <a href="#services" class="btn btn-secondary" data-section="services">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="reports" class="page-section">
+        <h2>Отчеты</h2>
+        <div class="dashboard">
+            <div class="dashboard-card">
+                <h3>📊 График работы ветеринаров</h3>
+                <p>Недельное расписание всех врачей</p>
+                <button type="button" class="btn" data-report="schedule">Сформировать</button>
+            </div>
+            <div class="dashboard-card">
+                <h3>📋 Перечень услуг пациента</h3>
+                <p>Услуги и рецепты за период</p>
+                <button type="button" class="btn" data-report="services">Сформировать</button>
+            </div>
+            <div class="dashboard-card">
+                <h3>💰 Счет на оплату</h3>
+                <p>Формирование счета для клиента</p>
+                <button type="button" class="btn" data-report="bill">Сформировать</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="admin" class="page-section">
+        <h2>Управление пользователями</h2>
+        <form class="search-form" id="user-filter-form">
+            <label for="filter-user">Поиск пользователя:</label>
+            <input type="text" id="filter-user" placeholder="ФИО или логин..." class="search-input">
+            <button type="submit" class="btn">Найти</button>
+            <button type="button" class="btn btn-secondary" id="reset-user-filter">Сбросить</button>
+        </form>
+        <div class="data-list" id="users-list"></div>
+        <div id="admin-controls-user" style="display:none;">
+            <a href="#add-user" class="btn btn-primary" data-section="add-user">+ Добавить пользователя</a>
+        </div>
+    </section>
+
+    <section id="add-user" class="page-section">
+        <h2>Добавление нового пользователя</h2>
+        <form class="data-form" id="add-user-form">
+            <div class="form-group">
+                <label for="user-fio">ФИО:</label>
+                <input type="text" id="user-fio" name="fio" required>
+            </div>
+            <div class="form-group">
+                <label for="user-login">Логин:</label>
+                <input type="text" id="user-login" name="login" required>
+            </div>
+            <div class="form-group">
+                <label for="user-password">Пароль:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="user-password" name="password" required>
+                    <button type="button" class="toggle-password" data-target="user-password">👁</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="user-role">Роль:</label>
+                <select id="user-role" name="role" required>
+                    <option value="">Выберите роль</option>
+                    <option value="Клиент">Клиент</option>
+                    <option value="Ветеринар">Ветеринар</option>
+                    <option value="Регистратор">Регистратор</option>
+                    <option value="Администратор">Администратор</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Добавить</button>
+                <a href="#admin" class="btn btn-secondary" data-section="admin">Отмена</a>
+            </div>
+        </form>
+    </section>
+
+    <section id="login" class="page-section">
+        <h2>Вход в систему</h2>
+        <p class="description">Тестовые аккаунты: admin/admin123, ivanov/ivanov123, petrov/petrov123</p>
+        <form class="login-form" id="login-form">
+            <div class="form-group">
+                <label for="login-username">Логин:</label>
+                <input type="text" id="login-username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="login-password">Пароль:</label>
+                <div class="password-wrapper">
+                    <input type="password" id="login-password" required>
+                    <button type="button" class="toggle-password" data-target="login-password">👁</button>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </div>
+        </form>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-content">
+        <p>© 2026 АИС Ветклиника. Все права защищены.</p>
+        <p>Email: info@vetclinic.ru</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
